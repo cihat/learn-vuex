@@ -1,14 +1,30 @@
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
+  data() {
+    return {
+      posts: [],
+    };
+  },
+  methods: {
+    ...mapActions({
+      fetchPosts: "fetchPosts",
+    }),
+  },
   computed: {
     ...mapState({
       user: "user",
     }),
     ...mapGetters({
-      postsCount: "postsCount",
+      getPostsCount: "getPostsCount",
+      allPosts: "allPosts",
     }),
+  },
+
+  async created() {
+    this.posts = await this.fetchPosts();
+    console.log(this.posts, "this.posts");
   },
 };
 </script>
@@ -22,8 +38,17 @@ export default {
     <hr />
     <br />
     <h2>Using Getters</h2>
-    <p>{{ $store.getters.postsCount }} posts available</p>
-    <h4>{{ postsCount }}</h4>
+    <p>{{ $store.getters.getPostsCount }} posts available</p>
+    <h4>{{ getPostsCount }}</h4>
+    <ul>
+      <li v-for="post in $store.state.posts" :key="post.id">
+        <h3>{{ post.title }}</h3>
+        <h5>{{ post.body }}</h5>
+        {{ post.id }}
+        <br />
+        <hr />
+      </li>
+    </ul>
   </div>
 </template>
 
